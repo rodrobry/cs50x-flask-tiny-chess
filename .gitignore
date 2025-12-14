@@ -1,0 +1,35 @@
+# ----------------------------------------
+# 1. Virtual Environment & Dependencies
+# ----------------------------------------
+venv/
+.venv/
+env/
+.env
+
+# Dependencies created during installation
+__pycache__/
+*.pyc
+build/
+dist/
+*.egg-info/
+
+# ----------------------------------------
+# 2. Operating System & Editor Files
+# ----------------------------------------
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# ----------------------------------------
+# 3. Flask & Database
+# ----------------------------------------
+# Flask specific runtime files
+instance/
+
+# Local database files
+*.db
