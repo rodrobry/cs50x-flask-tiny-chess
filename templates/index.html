@@ -1,0 +1,31 @@
+<head>
+    <title>Tiny Chess</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<h1>Tiny Chess</h1>
+<table>
+    <thead>
+        <th></th>
+        {% for file in files %}
+            <th>{{ file }}</th>
+        {% endfor %}
+    </thead>
+    <tbody>
+        {% for rank_index in range(board | length) %}
+            {% set rank_number = (board | length) - rank_index %}
+            
+            <tr data-rank="{{ rank_number }}">
+                <th>{{ rank_number }}</th>
+                
+                {% for piece in board[rank_index] %}
+                    
+                    <td data-square="{{ piece }}" data-piece="{{ piece }}">
+                        {{ piece }}
+                    </td>
+                {% endfor %}
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

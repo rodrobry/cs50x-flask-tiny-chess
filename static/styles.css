@@ -1,0 +1,44 @@
+
+/* Define your board colors */
+:root {
+    --light-square: #f0d9b5; /* Light Wood */
+    --dark-square: #b58863;  /* Dark Wood */
+
+    background-color: beige;
+    text-align: center;
+}
+
+table{
+    /* Remove space between cells */
+    border-collapse: collapse;
+    margin: auto;
+}
+
+/* Set all data cells (td) to the light color first */
+td {
+    width: 30px;
+    height: 30px;
+    border: 1px solid;
+    text-align: center;
+
+    background-color: var(--light-square);
+}
+
+/* Rule A: Target cells in ODD rows that are EVEN cells */
+/* This colors cells like B8, D8, F8, H8 (assuming <th> is the 1st child) */
+tbody tr:nth-child(odd) td:nth-child(even) {
+    background-color: var(--dark-square);
+}
+
+/* Rule B: Target cells in EVEN rows that are ODD cells */
+/* This colors cells like A7, C7, E7, G7 (assuming <th> is the 1st child) */
+tbody tr:nth-child(even) td:nth-child(odd) {
+    background-color: var(--dark-square);
+}
+
+th{
+    width: 10px;
+    height: 10px;
+    font-size: xx-small;
+    text-align: center;
+}
