@@ -1,20 +1,9 @@
 # app.py
 
 from flask import Flask, render_template
+from board import get_initial_board
 
 app = Flask(__name__)
-
-def get_initial_board():
-    return [
-        ['bR', 'bB', 'bM', 'bB', 'bR'], # Rank 8
-        ['bP', 'bP', 'bP', 'bP', 'bP'], # Rank 7
-        ['  ', '  ', '  ', '  ', '  '], # Rank 6
-        ['  ', '  ', '  ', '  ', '  '], # Rank 5
-        ['  ', '  ', '  ', '  ', '  '], # Rank 4
-        ['  ', '  ', '  ', '  ', '  '], # Rank 3
-        ['wP', 'wP', 'wP', 'wP', 'wP'], # Rank 2
-        ['wR', 'wN', 'wM', 'wN', 'wR']  # Rank 1
-    ]
 
 @app.route("/")
 def index():
