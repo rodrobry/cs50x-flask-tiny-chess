@@ -22,10 +22,13 @@ def index():
 def make_move():
     """Handles POST requests for a piece move."""
     # Logic to get move data from the form
-    start_sq = request.form.get('start_square')
-    end_sq = request.form.get('end_square')
-    
-    # Call the board's move method (logic lives in board.py)
-    # game_board.move_piece(start_sq, end_sq) 
+    start_r = int(request.form.get('start_row'))
+    start_c = int(request.form.get('start_col'))
+    end_r = int(request.form.get('end_row'))
+    end_c = int(request.form.get('end_col'))
+
+    start_coords = (start_r, start_c)
+    end_coords = (end_r, end_c)
+    game_board.move_piece(start_coords, end_coords)
     
     return redirect(url_for('main.index'))

@@ -1,4 +1,4 @@
-from .piece import Bishop, Knight, Monarch, Pawn, Rook
+from .piece import Bishop, Knight, Monarch, Pawn, Piece, Rook
 
 class Board:
     def __init__(self):
@@ -38,4 +38,25 @@ class Board:
 
     def get_board(self):
         return self.board_array
+    
+    def move_piece(self, start_coords, end_coords):
+        start_rank, start_file = start_coords
+        end_rank, end_file = end_coords
+
+        piece_to_move: Piece = self.board_array[start_rank][start_file]
+        if piece_to_move is None:
+            print("Error: Tried to move invalid piece")
+            return False
+
+        valid_destinations = piece_to_move.get_valid_moves(self.board_array)
+        if end_coords not in valid_destinations:
+            print("Error: Invalid move for piece")
+            return False
+
+        piece_to_move.position = end_coords
+        self.board_array[end_rank][end_file] = piece_to_move 
+        self.board_array[start_rank][start_file] = None
+        print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
+
+        return True
     

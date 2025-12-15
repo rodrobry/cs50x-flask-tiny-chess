@@ -1,31 +1,36 @@
 <head>
     <title>Tiny Chess</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='board.js') }}"></script>
 </head>
-<h1>Tiny Chess</h1>
-<table>
-    <thead>
-        <th></th>
-        {% for file in files %}
-            <th>{{ file }}</th>
-        {% endfor %}
-    </thead>
-    <tbody>
-        {% for rank_index in range(board | length) %}
-            {% set rank_number = (board | length) - rank_index %}
-            
-            <tr data-rank="{{ rank_number }}">
-                <th>{{ rank_number }}</th>
-                
-                {% for piece in board[rank_index] %}
-                    
-                    <td class="{{ piece.color }}" data-square="{{ piece }}" data-piece="{{ piece }}">
-                        {{ piece.symbol }}
-                    </td>
-                {% endfor %}
-                
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<body>
+    <h1>Tiny Chess</h1>
+    <table>
+        <thead>
+            <th></th>
+            {% for file in files %}
+                <th>{{ file }}</th>
+            {% endfor %}
+        </thead>
+        <tbody>
+            {% for row in range(board | length) %}
+                {% set rank_number = (board | length) - row %}
+                <tr>
+                    <th>{{ rank_number }}</th>
+                    {% for piece in board[row] %}
+                        <td class="{{ piece.color }}" data-row="{{ row }}" data-col="{{ loop.index0 }}" onclick="handleSquareClick(this)">
+                            {{ piece.symbol }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form id="move-form" action="{{ url_for('main.make_move') }}" method="POST">
+        <input type="hidden" name="start_row" id="start_row">
+        <input type="hidden" name="start_col" id="start_col">
+        <input type="hidden" name="end_row" id="end_row">
+        <input type="hidden" name="end_col" id="end_col">
+    </form>
+</body>
