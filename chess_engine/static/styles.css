@@ -19,6 +19,7 @@ td {
     width: 30px;
     height: 30px;
     border: 1px solid;
+    border-color: black;
     text-align: center;
 
     background-color: var(--light-square);
@@ -41,4 +42,13 @@ th{
     height: 10px;
     font-size: xx-small;
     text-align: center;
+}
+
+.white{
+    color: white;
+    text-shadow: 0px 0px 3px black;
+}
+
+.black{
+    color: black;
 }

@@ -20,7 +20,7 @@
                 
                 {% for piece in board[rank_index] %}
                     
-                    <td data-square="{{ piece }}" data-piece="{{ piece }}">
+                    <td class="{{ piece.color }}" data-square="{{ piece }}" data-piece="{{ piece }}">
                         {{ piece.symbol }}
                     </td>
                 {% endfor %}
