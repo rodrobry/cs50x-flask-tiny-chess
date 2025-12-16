@@ -44,11 +44,19 @@ th{
     text-align: center;
 }
 
-.white{
+td.white{
     color: white;
     text-shadow: 0px 0px 3px black;
 }
 
-.black{
+td.black{
     color: black;
+}
+
+td.selected{
+    outline: 3px solid black;
+}
+
+td.valid-move{
+    outline: 3px solid green;
 }
