@@ -31,7 +31,14 @@ def select():
                 'status': 'error',
                 'message': 'Invalid coordinate format'
             }), 400
-    
+
+    # Check game is active
+    if not game_board.is_game_active():
+        return jsonify({
+            'status': 'error',
+            'message': 'Game is over.'
+        }), 400
+
     # Calculate legal moves
     piece: Piece = game_board.get_board()[start_r][start_c]
     if piece is None:
@@ -39,8 +46,16 @@ def select():
             'status': 'error',
             'message': 'No piece at the selected coordinates.'
         })
-    valid_moves = piece.get_valid_moves(game_board.get_board())
+
+    # Check piece belongs to current player
+    if piece.color != game_board.current_player:
+        return jsonify({
+            'status': 'error',
+            'message': f'It is {game_board.current_player}\'s turn.'
+        }), 400
     
+    valid_moves = piece.get_valid_moves(game_board.get_board())
+
     # Return the list of (r, c) tuples as JSON
     return jsonify({
         'status': 'success',
@@ -66,31 +81,34 @@ def move():
     end_coords = (end_r, end_c)
 
     # Execute the move on the board
-    success = game_board.move_piece(start_coords, end_coords)
+    result = game_board.move_piece(start_coords, end_coords)
 
-    if success:
-        # Return a success message. 
-        # Since the page won't reload, we don't 'redirect'.
+    if result['success']:
+        # Return a success message
         return jsonify({
             'status': 'success',
-            'message': f'Moved piece to ({end_r}, {end_c})',
+            'message': result['message'],
+            'current_player': result['current_player'],
+            'game_state': result['game_state'],
             'new_board': game_board.serialize_board()
         })
     else:
         # Return an error message so the JS can alert the user
         return jsonify({
             'status': 'error', 
-            'message': 'This move is not allowed by the rules.'
+            'message': result['message'],
+            'reason': result.get('reason', 'unknown')
         }), 400
 
 @bp.route('/reset', methods=['POST'])
 def reset_game():
-    # Re-initialize your board object to its starting state
-    global game_board
-    game_board.__init__()
+    """Reset the board to starting position."""
+    game_board.reset_game()
 
-    # Return the fresh display array to the frontend
     return jsonify({
         'status': 'success',
+        'message': 'Game reset. White to move.',
+        'current_player': game_board.current_player,
+        'game_state': game_board.game_state.value,
         'new_board': game_board.serialize_board()
     })

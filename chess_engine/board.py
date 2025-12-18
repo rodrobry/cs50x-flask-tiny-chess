@@ -1,8 +1,17 @@
+from enum import Enum
 from .piece import Bishop, Knight, Monarch, Pawn, Piece, Rook
+
+class GameState(Enum):
+    NOT_STARTED = "not_started"
+    WHITE_TURN = "white_turn"
+    BLACK_TURN = "black_turn"
+    GAME_OVER = "game_over"
 
 class Board:
     def __init__(self):
         self.board_array = self.initialize_board()
+        self.game_state = GameState.WHITE_TURN
+        self.current_player = 'white'
 
     def initialize_board(self):
         """
@@ -39,26 +48,84 @@ class Board:
     def get_board(self):
         return self.board_array
     
+    def is_game_active(self):
+        """Check if the game is still in progress."""
+        return self.game_state in (GameState.WHITE_TURN, GameState.BLACK_TURN)
+
     def move_piece(self, start_coords, end_coords):
+        """
+        Attempt to move a piece. Validates game state and player turn.
+        Returns a dict with 'success', 'message', and optionally 'reason'.
+        """
+        # Check if game is over
+        if not self.is_game_active():
+            return {
+                'success': False,
+                'message': 'Game is over.',
+                'reason': 'game_over'
+            }
+
         start_rank, start_file = start_coords
         end_rank, end_file = end_coords
 
         piece_to_move: Piece = self.board_array[start_rank][start_file]
         if piece_to_move is None:
-            print("Error: Tried to move invalid piece")
-            return False
+            return {
+                'success': False,
+                'message': 'No piece at the selected coordinates.',
+                'reason': 'no_piece'
+            }
+
+        # Validate that the moving piece belongs to the current player
+        if piece_to_move.color != self.current_player:
+            return {
+                'success': False,
+                'message': f'It is {self.current_player}\'s turn. You cannot move {piece_to_move.color} pieces.',
+                'reason': 'wrong_player'
+            }
 
         valid_destinations = piece_to_move.get_valid_moves(self.board_array)
         if end_coords not in valid_destinations:
-            print("Invalid move for piece")
-            return False
+            return {
+                'success': False,
+                'message': 'Invalid move for this piece.',
+                'reason': 'invalid_move'
+            }
 
+        # Execute the move
         piece_to_move.position = end_coords
         self.board_array[end_rank][end_file] = piece_to_move 
         self.board_array[start_rank][start_file] = None
         print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
 
-        return True
+        # Switch turn
+        self._advance_turn()
+
+        return {
+            'success': True,
+            'message': f'Moved {piece_to_move.symbol} to ({end_rank}, {end_file})',
+            'current_player': self.current_player,
+            'game_state': self.game_state.value
+        }
+
+    def _advance_turn(self):
+        """Switch to the next player's turn."""
+        if self.current_player == 'white':
+            self.game_state = GameState.BLACK_TURN
+            self.current_player = 'black'
+        else:
+            self.game_state = GameState.WHITE_TURN
+            self.current_player = 'white'
+
+    def end_game(self):
+        """End the game (e.g., on checkmate or resignation)."""
+        self.game_state = GameState.GAME_OVER
+
+    def reset_game(self):
+        """Reset the board to starting position and restart the game."""
+        self.board_array = self.initialize_board()
+        self.game_state = GameState.WHITE_TURN
+        self.current_player = 'white'
 
     def serialize_board(self):
         """
