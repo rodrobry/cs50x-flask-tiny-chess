@@ -108,3 +108,18 @@ function clearHighlights() {
         el.classList.remove('valid-move');
     });
 }
+
+async function resetGame() {
+    try {
+        const response = await fetch('/reset', {
+            method: 'POST'
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+            // Reload the page to reset the board
+            location.reload();
+        }
+    } catch (error) {
+        console.error("Error resetting the game:", error);
+    }
+}

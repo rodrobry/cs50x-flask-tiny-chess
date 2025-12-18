@@ -82,3 +82,15 @@ def move():
             'status': 'error', 
             'message': 'This move is not allowed by the rules.'
         }), 400
+
+@bp.route('/reset', methods=['POST'])
+def reset_game():
+    # Re-initialize your board object to its starting state
+    global game_board
+    game_board.__init__()
+
+    # Return the fresh display array to the frontend
+    return jsonify({
+        'status': 'success',
+        'new_board': game_board.serialize_board()
+    })
