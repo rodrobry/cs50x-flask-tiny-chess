@@ -45,7 +45,15 @@ class Pawn(Piece):
 
         # Basic capture logic (Needs board access to check if piece is opponent)
         # This is where the logic would get complex, but we will leave it simple for now.
-        
+        # Check diagonally captures
+        for offset in [-1, 1]:
+            target_rank = rank + direction
+            target_file = file + offset
+            if 0 <= target_rank < 8 and 0 <= target_file < 5:
+                target_piece = board[target_rank][target_file]
+                if target_piece is not None and target_piece.color != self.color:
+                    moves.append((target_rank, target_file))
+
         return moves
 
 

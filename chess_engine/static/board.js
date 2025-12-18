@@ -83,6 +83,7 @@ async function movePiece(row, col) {
 
         // Move the piece in the UI
         targetSquare.innerText = piece.symbol;
+        targetSquare.classList.remove('white', 'black');
         targetSquare.classList.add(piece.color);
         selectedSquare.innerText = '';
 
