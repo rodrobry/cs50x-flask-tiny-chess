@@ -18,7 +18,9 @@
                 <tr>
                     <th>{{ rank_number }}</th>
                     {% for piece in board[row] %}
-                        <td class="{{ piece.color }}" data-row="{{ row }}" data-col="{{ loop.index0 }}" onclick="handleSquareClick(this)">
+                        <td class="{{ piece.color }}"
+                            data-row="{{ row }}" data-col="{{ loop.index0 }}"
+                            onclick="handleSquareClick(this)">
                             {{ piece.symbol }}
                         </td>
                     {% endfor %}
@@ -27,7 +29,7 @@
         </tbody>
     </table>
 
-    <form id="move-form" action="{{ url_for('main.make_move') }}" method="POST">
+    <form id="move-form" action="{{ url_for('main.move') }}" method="POST">
         <input type="hidden" name="start_row" id="start_row">
         <input type="hidden" name="start_col" id="start_col">
         <input type="hidden" name="end_row" id="end_row">
