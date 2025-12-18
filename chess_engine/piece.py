@@ -63,8 +63,35 @@ class Rook(Piece):
         self.symbol = 'R'
 
     def get_valid_moves(self, board):
-        # TODO: Rook logic (horizontal and vertical sliding)
-        return []
+        # Rook logic (horizontal and vertical sliding)
+        moves = []
+        rank, file = self.position
+
+        # Directions: (delta_rank, delta_file)
+        directions = [
+            (-1, 0), (1, 0),  # Vertical (Up, Down)
+            (0, -1), (0, 1)   # Horizontal (Left, Right)
+        ]
+
+        for dr, df in directions:
+            for i in range(1, 8):  # Check up to 7 squares away
+                r, f = rank + dr * i, file + df * i
+
+                # Stay on the board
+                if 0 <= r < 8 and 0 <= f < 8:
+                    target_piece = board[r][f]
+
+                    if target_piece is None:
+                        moves.append((r, f))
+                    elif target_piece.color != self.color:
+                        moves.append((r, f))  # Capture
+                        break  # Blocked after capture
+                    else:
+                        break  # Blocked by own piece
+                else:
+                    break  # Off the board
+
+        return moves
 
 class Knight(Piece):
     def __init__(self, color, position):
