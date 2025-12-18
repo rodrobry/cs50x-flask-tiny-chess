@@ -11,6 +11,47 @@ class Piece:
         # e.g., 'P' for Pawn, 'R' for Rook, etc.
         self.symbol = '?'
 
+        # Board dimensions for helper checks (5 files x 8 ranks)
+        self.ROWS = 8
+        self.COLS = 5
+
+    def _on_board(self, rank, file):
+        return 0 <= rank < self.ROWS and 0 <= file < self.COLS
+
+    def _is_enemy_at(self, board, rank, file):
+        if not self._on_board(rank, file):
+            return False
+        target = board[rank][file]
+        return target is not None and getattr(target, 'color', None) != self.color
+
+    def _is_empty_at(self, board, rank, file):
+        if not self._on_board(rank, file):
+            return False
+        return board[rank][file] is None
+
+    def _sliding_moves(self, board, directions, max_range=7):
+        """Generic sliding move generator used by Rook/Bishop/Queen-like pieces.
+
+        directions: iterable of (dr, df) tuples.
+        Returns a list of (rank, file) tuples.
+        """
+        moves = []
+        rank, file = self.position
+        for dr, df in directions:
+            for i in range(1, max_range + 1):
+                r, f = rank + dr * i, file + df * i
+                if not self._on_board(r, f):
+                    break
+                target = board[r][f]
+                if target is None:
+                    moves.append((r, f))
+                    continue
+                # occupied
+                if getattr(target, 'color', None) != self.color:
+                    moves.append((r, f))
+                break
+        return moves
+
     def get_valid_moves(self, board):
         """
         Abstract method. Subclasses must override this to return a list of 
@@ -32,27 +73,18 @@ class Pawn(Piece):
         # Determine direction based on color
         direction = -1 if self.color == 'white' else 1
         
-        # Compute one square straight ahead
+        # Compute one square straight ahead and add if empty
         target_rank = rank + direction
         target_pos = (target_rank, file)
-        
-        # Check if the target position is on the board
-        if 0 <= target_rank < 8:
-            # Check if the target square is empty (Pawn can't capture forward)
-            # NOTE: For now, we assume the board uses a simple array structure.
-            if board[target_rank][file] is None:
-                 moves.append(target_pos)
+        if self._on_board(target_rank, file) and self._is_empty_at(board, target_rank, file):
+            moves.append(target_pos)
 
-        # Basic capture logic (Needs board access to check if piece is opponent)
-        # This is where the logic would get complex, but we will leave it simple for now.
         # Check diagonally captures
-        for offset in [-1, 1]:
+        for offset in (-1, 1):
             target_rank = rank + direction
             target_file = file + offset
-            if 0 <= target_rank < 8 and 0 <= target_file < 5:
-                target_piece = board[target_rank][target_file]
-                if target_piece is not None and target_piece.color != self.color:
-                    moves.append((target_rank, target_file))
+            if self._is_enemy_at(board, target_rank, target_file):
+                moves.append((target_rank, target_file))
 
         return moves
 
@@ -63,35 +95,9 @@ class Rook(Piece):
         self.symbol = 'R'
 
     def get_valid_moves(self, board):
-        # Rook logic (horizontal and vertical sliding)
-        moves = []
-        rank, file = self.position
-
-        # Directions: (delta_rank, delta_file)
-        directions = [
-            (-1, 0), (1, 0),  # Vertical (Up, Down)
-            (0, -1), (0, 1)   # Horizontal (Left, Right)
-        ]
-
-        for dr, df in directions:
-            for i in range(1, 8):  # Check up to 7 squares away
-                r, f = rank + dr * i, file + df * i
-
-                # Stay on the board
-                if 0 <= r < 8 and 0 <= f < 8:
-                    target_piece = board[r][f]
-
-                    if target_piece is None:
-                        moves.append((r, f))
-                    elif target_piece.color != self.color:
-                        moves.append((r, f))  # Capture
-                        break  # Blocked after capture
-                    else:
-                        break  # Blocked by own piece
-                else:
-                    break  # Off the board
-
-        return moves
+        # Use generic sliding helper for orthogonal directions
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        return self._sliding_moves(board, directions)
 
 class Knight(Piece):
     def __init__(self, color, position):
@@ -108,8 +114,8 @@ class Bishop(Piece):
         self.symbol = 'B'
 
     def get_valid_moves(self, board):
-        # TODO: Bishop logic (Diagonal sliding)
-        return []
+        directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        return self._sliding_moves(board, directions)
     
 class Monarch(Piece):
     def __init__(self, color, position):
@@ -117,5 +123,7 @@ class Monarch(Piece):
         self.symbol = 'M'
 
     def get_valid_moves(self, board):
-        # TODO: Monarch logic (call valid moves for a Rook and a Bishop)
-        return []
+        # Combine rook and bishop directions (like a Queen in standard chess)
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1),
+                      (-1, -1), (-1, 1), (1, -1), (1, 1)]
+        return self._sliding_moves(board, directions)
