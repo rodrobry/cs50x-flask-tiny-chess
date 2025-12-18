@@ -105,8 +105,20 @@ class Knight(Piece):
         self.symbol = 'N'
 
     def get_valid_moves(self, board):
-        # TODO: Knight logic (L-shape moves)
-        return []
+        moves = []
+        rank, file = self.position
+        deltas = [
+            (-2, -1), (-2, 1), (2, -1), (2, 1),
+            (-1, -2), (-1, 2), (1, -2), (1, 2)
+        ]
+        for dr, df in deltas:
+            r, f = rank + dr, file + df
+            if not self._on_board(r, f):
+                continue
+            target = board[r][f]
+            if target is None or getattr(target, 'color', None) != self.color:
+                moves.append((r, f))
+        return moves
     
 class Bishop(Piece):
     def __init__(self, color, position):
