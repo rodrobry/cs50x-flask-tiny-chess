@@ -50,7 +50,7 @@ class Board:
 
         valid_destinations = piece_to_move.get_valid_moves(self.board_array)
         if end_coords not in valid_destinations:
-            print("Error: Invalid move for piece")
+            print("Invalid move for piece")
             return False
 
         piece_to_move.position = end_coords
@@ -59,4 +59,24 @@ class Board:
         print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
 
         return True
+
+    def serialize_board(self):
+        """
+        Converts the board to a JSON-serializable format.
+        Returns a 2D list where each piece is represented as a dict with its properties.
+        """
+        serialized = []
+        for row in self.board_array:
+            serialized_row = []
+            for piece in row:
+                if piece is None:
+                    serialized_row.append(None)
+                else:
+                    serialized_row.append({
+                        'symbol': piece.symbol,
+                        'color': piece.color,
+                        'position': piece.position
+                    })
+            serialized.append(serialized_row)
+        return serialized
     

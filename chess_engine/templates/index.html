@@ -28,11 +28,4 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <form id="move-form" action="{{ url_for('main.move') }}" method="POST">
-        <input type="hidden" name="start_row" id="start_row">
-        <input type="hidden" name="start_col" id="start_col">
-        <input type="hidden" name="end_row" id="end_row">
-        <input type="hidden" name="end_col" id="end_col">
-    </form>
 </body>

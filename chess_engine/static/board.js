@@ -30,11 +30,11 @@ async function selectPiece(squareElement) {
     formData.append('start_col', startCol);
 
     try {
+        // Get valid moves for selected piece
         const response = await fetch('/select', {
             method: 'POST',
             body: formData
         });
-        
         const data = await response.json();
         validMoves = data.moves;
 
@@ -52,27 +52,49 @@ async function selectPiece(squareElement) {
     }
 }
 
-function movePiece(row, col) {
+async function movePiece(row, col) {
     // Get the start coordinates from the first click
-        const startRow = selectedSquare.dataset.row;
-        const startCol = selectedSquare.dataset.col;
+    const startRow = selectedSquare.dataset.row;
+    const startCol = selectedSquare.dataset.col;
 
-        // Get the end coordinates from the second click
-        const endRow = row;
-        const endCol = col;
+    // Get the end coordinates from the second click
+    const endRow = row;
+    const endCol = col;
 
-        // Populate the hidden form fields
-        document.getElementById('start_row').value = startRow;
-        document.getElementById('start_col').value = startCol;
-        document.getElementById('end_row').value = endRow;
-        document.getElementById('end_col').value = endCol;
+    // AJAX Call to Flask to make the move 
+    const formData = new FormData();
+    formData.append('start_row', startRow);
+    formData.append('start_col', startCol);
+    formData.append('end_row', endRow);
+    formData.append('end_col', endCol);
 
-        // Submit the form to Flask route
-        document.getElementById('move-form').submit();
+    const response = await fetch('/move', {
+        method: 'POST',
+        body: formData
+    });
+    const result = await response.json();
 
-        // Reset the state
-        selectedSquare.classList.remove('selected');
-        selectedSquare = null;
+    if (result.status === 'success') {
+        // Find the <td> element for the destination
+        const targetSquare = document.querySelector(
+            `td[data-row="${endRow}"][data-col="${endCol}"]`
+        );
+        piece = result.new_board[endRow][endCol];
+
+        // Move the piece in the UI
+        targetSquare.innerText = piece.symbol;
+        targetSquare.classList.add(piece.color);
+        selectedSquare.innerText = '';
+
+        console.log("UI Updated successfully!");
+    } else {
+        console.log("Move failed: " + result.message);
+    }
+    
+    // Reset for the next move
+    currentValidMoves = [];
+    clearHighlights();
+    selectedSquare = null;
 }
 
 function clearHighlights() {

@@ -22,9 +22,15 @@ def index():
 @bp.route('/select', methods=['POST'])
 def select():
     """Compute valid moves for a piece move."""
-    # Get move data from the form
-    start_r = int(request.form.get('start_row'))
-    start_c = int(request.form.get('start_col'))
+    # Get data from the form
+    try:
+        start_r = int(request.form.get('start_row'))
+        start_c = int(request.form.get('start_col'))
+    except (TypeError, ValueError):
+        return jsonify({
+                'status': 'error',
+                'message': 'Invalid coordinate format'
+            }), 400
     
     # Calculate legal moves
     piece: Piece = game_board.get_board()[start_r][start_c]
@@ -44,14 +50,35 @@ def select():
 @bp.route('/move', methods=['POST'])
 def move():
     """Handles POST requests for a piece move."""
-    # Logic to get move data from the form
-    start_r = int(request.form.get('start_row'))
-    start_c = int(request.form.get('start_col'))
-    end_r = int(request.form.get('end_row'))
-    end_c = int(request.form.get('end_col'))
+    # Get data from the form
+    try:
+        start_r = int(request.form.get('start_row'))
+        start_c = int(request.form.get('start_col'))
+        end_r = int(request.form.get('end_row'))
+        end_c = int(request.form.get('end_col'))
+    except (TypeError, ValueError):
+        return jsonify({
+                'status': 'error',
+                'message': 'Invalid coordinate format'
+            }), 400
 
     start_coords = (start_r, start_c)
     end_coords = (end_r, end_c)
-    game_board.move_piece(start_coords, end_coords)
-    
-    return redirect(url_for('main.index'))
+
+    # Execute the move on the board
+    success = game_board.move_piece(start_coords, end_coords)
+
+    if success:
+        # Return a success message. 
+        # Since the page won't reload, we don't 'redirect'.
+        return jsonify({
+            'status': 'success',
+            'message': f'Moved piece to ({end_r}, {end_c})',
+            'new_board': game_board.serialize_board()
+        })
+    else:
+        # Return an error message so the JS can alert the user
+        return jsonify({
+            'status': 'error', 
+            'message': 'This move is not allowed by the rules.'
+        }), 400
