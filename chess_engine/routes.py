@@ -15,9 +15,10 @@ def index():
     
     board_data = game_board.get_board()
     files = ['a', 'b', 'c', 'd', 'e']
+    player_turn = "White" if game_board.current_player == 'white' else "Black"
 
-    return render_template("index.html", board=board_data, files=files)
-
+    return render_template(
+        "index.html", board=board_data, files=files, status=f"{player_turn}'s Turn")
 
 @bp.route('/select', methods=['POST'])
 def select():

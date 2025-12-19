@@ -2,7 +2,6 @@ from enum import Enum
 from .piece import Bishop, Knight, Monarch, Pawn, Piece, Rook
 
 class GameState(Enum):
-    NOT_STARTED = "not_started"
     WHITE_TURN = "white_turn"
     BLACK_TURN = "black_turn"
     GAME_OVER = "game_over"
@@ -93,13 +92,25 @@ class Board:
             }
 
         # Execute the move
+        target_piece = self.board_array[end_rank][end_file]
         piece_to_move.position = end_coords
         self.board_array[end_rank][end_file] = piece_to_move 
         self.board_array[start_rank][start_file] = None
-        print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
-
         # Switch turn
         self._advance_turn()
+        # Capture logic
+        if target_piece is not None:
+            if target_piece.symbol == 'M':
+                # Monarch captured - game over
+                print(f"Game over! {piece_to_move.color.capitalize()} wins by capturing the Monarch.")
+                self.end_game()
+                print(self.game_state)
+            else:
+                print(f"Captured {target_piece.symbol} at {end_coords}")
+        # Move logic
+        else:
+            print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
+
 
         return {
             'success': True,

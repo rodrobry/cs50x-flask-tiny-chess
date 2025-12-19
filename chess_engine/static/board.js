@@ -86,6 +86,13 @@ async function movePiece(row, col) {
         targetSquare.classList.remove('white', 'black');
         targetSquare.classList.add(piece.color);
         selectedSquare.innerText = '';
+        if (result.game_state === "game_over") {
+            winner = piece.color === 'white' ? 'White' : 'Black';
+            document.querySelector('#status').innerText = "Game Over!" + winner + " wins!";
+        } else {
+            playerTurn = result.game_state === "white_turn" ? "White" : "Black";
+            document.querySelector('#status').innerText = playerTurn + "'s Turn";
+        }
 
         console.log("UI Updated successfully!");
     } else {
