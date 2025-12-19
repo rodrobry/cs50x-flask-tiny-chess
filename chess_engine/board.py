@@ -6,9 +6,13 @@ class GameState(Enum):
     BLACK_TURN = "black_turn"
     GAME_OVER = "game_over"
 
+
 class Board:
+    FILES = ['a', 'b', 'c', 'd', 'e']
+
     def __init__(self):
         self.board_array = self.initialize_board()
+        self.move_history = []
         self.game_state = GameState.WHITE_TURN
         self.current_player = 'white'
 
@@ -100,6 +104,7 @@ class Board:
         self._advance_turn()
         # Capture logic
         if target_piece is not None:
+            log_str = f"{piece_to_move.symbol}x{8 - end_rank}{self.FILES[end_file]}"
             if target_piece.symbol == 'M':
                 # Monarch captured - game over
                 print(f"Game over! {piece_to_move.color.capitalize()} wins by capturing the Monarch.")
@@ -109,8 +114,11 @@ class Board:
                 print(f"Captured {target_piece.symbol} at {end_coords}")
         # Move logic
         else:
+            log_str = f"{piece_to_move.symbol}{8 - end_rank}{self.FILES[end_file]}"
             print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
 
+        # Log move
+        self.move_history.append(log_str)
 
         return {
             'success': True,

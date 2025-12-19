@@ -5,29 +5,43 @@
 </head>
 <body>
     <h1>Tiny Chess</h1>
-    <table>
-        <thead>
-            <th></th>
-            {% for file in files %}
-                <th>{{ file }}</th>
-            {% endfor %}
-        </thead>
-        <tbody>
-            {% for row in range(board | length) %}
-                {% set rank_number = (board | length) - row %}
-                <tr>
-                    <th>{{ rank_number }}</th>
-                    {% for piece in board[row] %}
-                        <td class="{{ piece.color }}"
-                            data-row="{{ row }}" data-col="{{ loop.index0 }}"
-                            onclick="handleSquareClick(this)">
-                            {{ piece.symbol }}
-                        </td>
+    <div class="game-container">
+        <div class="board-section">
+            <table id="chess-board">
+                <thead>
+                    <th></th>
+                    {% for file in files %}
+                        <th>{{ file }}</th>
                     {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p id="status">{{ status }}</p>
-    <button onclick="resetGame()">Reset Game</button>
+                </thead>
+                <tbody>
+                    {% for row in range(board | length) %}
+                        {% set rank_number = (board | length) - row %}
+                        <tr>
+                            <th>{{ rank_number }}</th>
+                            {% for piece in board[row] %}
+                                <td class="{{ piece.color }}"
+                                    data-row="{{ row }}" data-col="{{ loop.index0 }}"
+                                    onclick="handleSquareClick(this)">
+                                    {{ piece.symbol }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p id="status">{{ status }}</p>
+            <button onclick="resetGame()">Reset Game</button>
+        </div>
+        <div class="log-section">
+            <h3 class="log-header">Move History</h3>
+            <div id="move-log">
+                <ol id="move-list">
+                    {% for move in log %}
+                        <li>{{ move }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
 </body>

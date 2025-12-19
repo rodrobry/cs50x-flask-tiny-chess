@@ -86,9 +86,12 @@ async function movePiece(row, col) {
         targetSquare.classList.remove('white', 'black');
         targetSquare.classList.add(piece.color);
         selectedSquare.innerText = '';
+        // Log the move
+        updateMoveLog(result.move_history);
+        // Update game status
         if (result.game_state === "game_over") {
             winner = piece.color === 'white' ? 'White' : 'Black';
-            document.querySelector('#status').innerText = "Game Over!" + winner + " wins!";
+            document.querySelector('#status').innerText = "Game Over! " + winner + " wins!";
         } else {
             playerTurn = result.game_state === "white_turn" ? "White" : "Black";
             document.querySelector('#status').innerText = playerTurn + "'s Turn";
@@ -129,4 +132,15 @@ async function resetGame() {
     } catch (error) {
         console.error("Error resetting the game:", error);
     }
+}
+
+function updateMoveLog(history) {
+    const list = document.getElementById('move-list');
+    list.innerHTML = ''; // Clear the old list
+
+    history.forEach(move => {
+        const entry = document.createElement('li');
+        entry.innerText = move;
+        list.appendChild(entry);
+    });
 }

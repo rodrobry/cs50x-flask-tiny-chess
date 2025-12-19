@@ -13,12 +13,11 @@ game_board = Board()
 def index():
     """Renders the main chess board display."""
     
-    board_data = game_board.get_board()
-    files = ['a', 'b', 'c', 'd', 'e']
+    board = game_board.get_board()
     player_turn = "White" if game_board.current_player == 'white' else "Black"
 
     return render_template(
-        "index.html", board=board_data, files=files, status=f"{player_turn}'s Turn")
+        "index.html", board=board, files=game_board.FILES, log=game_board.move_history, status=f"{player_turn}'s Turn")
 
 @bp.route('/select', methods=['POST'])
 def select():
@@ -91,7 +90,8 @@ def move():
             'message': result['message'],
             'current_player': result['current_player'],
             'game_state': result['game_state'],
-            'new_board': game_board.serialize_board()
+            'new_board': game_board.serialize_board(),
+            'move_history': game_board.move_history
         })
     else:
         # Return an error message so the JS can alert the user
