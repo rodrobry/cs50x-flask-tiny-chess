@@ -98,7 +98,16 @@ class Board:
         # Execute the move
         target_piece = self.board_array[end_rank][end_file]
         piece_to_move.position = end_coords
-        self.board_array[end_rank][end_file] = piece_to_move 
+        if piece_to_move.symbol == 'P' and (end_rank == 0 or end_rank == 7):
+            # Pawn promotion
+            if piece_to_move.color == 'white':
+                promoted_piece = Knight('white', (end_rank, end_file))
+            else:
+                promoted_piece = Bishop('black', (end_rank, end_file))
+            self.board_array[end_rank][end_file] = promoted_piece
+            print("Pawn promoted!")
+        else:
+            self.board_array[end_rank][end_file] = piece_to_move
         self.board_array[start_rank][start_file] = None
         # Switch turn
         self._advance_turn()
