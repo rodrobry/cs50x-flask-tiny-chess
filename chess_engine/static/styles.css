@@ -8,6 +8,25 @@
     text-align: center;
 }
 
+h1, h3 {
+    margin-bottom: 0;
+}
+
+body {
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures body is at least as tall as the screen */
+    margin: 0;
+}
+
+.game-container {
+    flex: 1 0 auto; /* 1: Grow to fill space, 0: Don't shrink, auto: natural size */
+}
+
 table{
     /* Remove space between cells */
     border-collapse: collapse;
@@ -118,4 +137,10 @@ td.valid-move{
     padding: 0px;     /* Room for the list numbers */
     margin: 0;
     text-align: left;
+}
+
+footer {
+    text-align: left;
+    padding: 10px;
+    background-color: lightgrey;
 }
