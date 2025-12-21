@@ -1,5 +1,5 @@
 
-/* Define your board colors */
+/* Define board colors */
 :root {
     --light-square: #f0d9b5; /* Light Wood */
     --dark-square: #b58863;  /* Dark Wood */
@@ -8,12 +8,8 @@
     text-align: center;
 }
 
-h1, h3 {
+h1, h2, h3, h4 {
     margin-bottom: 0;
-}
-
-body {
-    margin: 0;
 }
 
 body {
@@ -23,9 +19,77 @@ body {
     margin: 0;
 }
 
+footer {
+    text-align: left;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: lightgrey;
+}
+
 .game-container {
     flex: 1 0 auto; /* 1: Grow to fill space, 0: Don't shrink, auto: natural size */
+    display: flex;          /* This creates the columns */
+    justify-content: center; /* Centers the whole thing on the screen */
+    gap: 40px;              /* Adds space between board and log */
+    padding: 20px;
 }
+
+.info-section {
+    flex: 0 0 150px;
+    display: flex;
+    flex-direction: column; /* Aligns header and box vertically */
+}
+
+.log-section {
+    background-color: white;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    height: auto;          /* Fixed height for the scrolling area */
+    padding: 10px;
+}
+
+.log-header {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+    text-align: center;
+}
+
+.move-log {
+    background-color: white;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    height: 75px;          /* Fixed height for the scrolling area */
+    overflow-y: auto;       /* Scrollbar appears here */
+    padding: 5px;
+    display: flex;
+    flex-direction: column-reverse; /* Keep scroll at bottom */
+}
+
+.move-list li:nth-child(odd) { /* White moves */
+    border: 1px solid lightgray;
+    border-left: 4px solid lightgrey;
+}
+
+.move-list li:nth-child(even) { /* Black moves */
+    background-color: lightgrey;
+    border-left: 4px solid black;
+}
+
+/* Optional: Add some padding to make the "bars" look better */
+.move-list li {
+    padding: 5px 10px;
+    list-style-position: inside; /* Keeps the numbers inside the colored box */
+}
+
+.move-list {
+    padding: 0px;     /* Room for the list numbers */
+    margin: 0;
+    text-align: left;
+}
+
+/* Table styling */
 
 table{
     /* Remove space between cells */
@@ -35,8 +99,8 @@ table{
 
 /* Set all data cells (td) to the light color first */
 td {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border: 1px solid;
     border-color: black;
     text-align: center;
@@ -78,69 +142,4 @@ td.selected{
 
 td.valid-move{
     box-shadow: inset 0 0 0 3px green;
-}
-
-/* style.css */
-
-.game-container {
-    display: flex;          /* This creates the columns */
-    justify-content: center; /* Centers the whole thing on the screen */
-    gap: 40px;              /* Adds space between board and log */
-    padding: 20px;
-}
-
-/* style.css */
-
-.log-section {
-    flex: 0 0 125px;
-    display: flex;
-    flex-direction: column; /* Aligns header and box vertically */
-}
-
-.log-header {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-    color: #333;
-    text-align: center;
-}
-
-#move-log {
-    background-color: white;
-    border: 1px solid lightgray;
-    border-radius: 3px;
-    height: 175px;          /* Fixed height for the scrolling area */
-    overflow-y: auto;       /* Scrollbar appears here */
-    padding: 10px;
-}
-
-#move-list li:nth-child(odd) {
-    background-color: #ffffff; /* White move background */
-    color: #333;
-    border-left: 4px solid #eee; /* Subtle accent */
-}
-
-#move-list li:nth-child(even) {
-    background-color: #f0f0f0; /* Black move background (light gray) */
-    color: #000;
-    border-left: 4px solid #333; /* Darker accent */
-}
-
-/* Optional: Add some padding to make the "bars" look better */
-#move-list li {
-    padding: 5px 10px;
-    margin-bottom: 2px;
-    list-style-position: inside; /* Keeps the numbers inside the colored box */
-}
-
-#move-list {
-    padding: 0px;     /* Room for the list numbers */
-    margin: 0;
-    text-align: left;
-}
-
-footer {
-    text-align: left;
-    padding: 10px;
-    background-color: lightgrey;
 }

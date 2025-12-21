@@ -94,7 +94,7 @@ async function movePiece(row, col) {
         // Update game status
         if (result.game_state === "game_over") {
             winner = piece.color === 'white' ? 'White' : 'Black';
-            document.querySelector('#status').innerText = "Game Over! " + winner + " wins!";
+            document.querySelector('#status').innerText = winner + " wins!";
         } else {
             playerTurn = result.game_state === "white_turn" ? "White" : "Black";
             document.querySelector('#status').innerText = playerTurn + "'s Turn";

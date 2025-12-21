@@ -30,18 +30,31 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <p id="status">{{ status }}</p>
-            <button onclick="resetGame()">Reset Game</button>
         </div>
-        <div class="log-section">
-            <h3 class="log-header">Move History</h3>
-            <div id="move-log">
-                <ol id="move-list">
-                    {% for move in log %}
-                        <li>{{ move }}</li>
-                    {% endfor %}
-                </ol>
+        <div class="info-section">
+            <h2 id="status">{{ status }}</h2>
+            <p></p>
+            <div class="log-section">
+                <h3 class="log-header">Move History</h3>
+                <div class="move-log">
+                    <ol class="move-list">
+                        {% for move in log %}
+                            <li>{{ move }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
             </div>
+            <button onclick="resetGame()">Reset Game</button>
+            <h3>Game mode</h3>
+            <select id="game-mode" onchange="changeGameMode()">
+                <option value="local">
+                    Local
+                </option>
+                <option value="bot">
+                    Bot
+                </option>
+            </select>
+            <p></p>
         </div>
     </div>
     <footer>
