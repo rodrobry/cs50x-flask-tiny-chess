@@ -91,7 +91,8 @@ def move():
             'current_player': result['current_player'],
             'game_state': result['game_state'],
             'new_board': game_board.serialize_board(),
-            'move_history': game_board.move_history
+            'move_history': game_board.move_history,
+            'is_capture': result['sound']
         })
     else:
         # Return an error message so the JS can alert the user

@@ -1,5 +1,11 @@
 let selectedSquare = null; // Stores the <td> element of the first click
 
+const Sounds = {
+    MOVE: 'move',
+    CAPTURE: 'capture',
+    GAMEOVER: 'gameover'
+};
+
 function handleSquareClick(squareElement) {
     const row = squareElement.dataset.row;
     const col = squareElement.dataset.col;
@@ -81,12 +87,9 @@ async function movePiece(row, col) {
         );
         piece = result.new_board[endRow][endCol];
 
-        // Move the piece in the UI
-        targetSquare.innerText = piece.symbol;
-        targetSquare.classList.remove('white', 'black');
-        targetSquare.classList.add(piece.color);
-        selectedSquare.innerText = '';
-        // Log the move
+        // Execute move
+        updateBoardUI(piece, targetSquare, selectedSquare);
+        playMoveSound(result.is_capture);
         updateMoveLog(result.move_history);
         // Update game status
         if (result.game_state === "game_over") {
@@ -143,4 +146,19 @@ function updateMoveLog(history) {
         entry.innerText = move;
         list.appendChild(entry);
     });
+}
+
+function playMoveSound(soundName) {
+    const soundKey = Object.values(Sounds).find(val => val === soundName);
+    const sound = document.getElementById(`sound-${soundKey}`);
+
+    sound.currentTime = 0; // Reset sound to start (in case of rapid moves)
+    sound.play();
+}
+
+function updateBoardUI(piece, targetSquare, selectedSquare) {
+        targetSquare.innerText = piece.symbol;
+        targetSquare.classList.remove('white', 'black');
+        targetSquare.classList.add(piece.color);
+        selectedSquare.innerText = '';
 }

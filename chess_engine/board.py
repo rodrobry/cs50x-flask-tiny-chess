@@ -6,6 +6,10 @@ class GameState(Enum):
     BLACK_TURN = "black_turn"
     GAME_OVER = "game_over"
 
+class Sounds(Enum):
+    MOVE = "move"
+    CAPTURE = "capture"
+    GAME_OVER = "gameover"
 
 class Board:
     FILES = ['a', 'b', 'c', 'd', 'e']
@@ -118,13 +122,15 @@ class Board:
                 # Monarch captured - game over
                 print(f"Game over! {piece_to_move.color.capitalize()} wins by capturing the Monarch.")
                 self.end_game()
-                print(self.game_state)
+                sound = Sounds.GAME_OVER
             else:
                 print(f"Captured {target_piece.symbol} at {end_coords}")
+                sound = Sounds.CAPTURE
         # Move logic
         else:
             log_str = f"{piece_to_move.symbol}{8 - end_rank}{self.FILES[end_file]}"
             print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
+            sound = Sounds.MOVE
 
         # Log move
         self.move_history.append(log_str)
@@ -133,7 +139,8 @@ class Board:
             'success': True,
             'message': f'Moved {piece_to_move.symbol} to ({end_rank}, {end_file})',
             'current_player': self.current_player,
-            'game_state': self.game_state.value
+            'game_state': self.game_state.value,
+            'sound': sound.value
         }
 
     def _advance_turn(self):
@@ -154,6 +161,7 @@ class Board:
         self.board_array = self.initialize_board()
         self.game_state = GameState.WHITE_TURN
         self.current_player = 'white'
+        self.move_history = []
 
     def serialize_board(self):
         """
