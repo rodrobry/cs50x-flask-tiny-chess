@@ -13,9 +13,11 @@ class Sounds(StrEnum):
 
 class GameMode(StrEnum):
     LOCAL = "local"
-    BOT = "bot"
+    BOT_EASY = "bot_easy"
+    BOT_MEDIUM = "bot_medium"
 
 @dataclass
 class Move:
     start: tuple
     end: tuple
+    score: int = 0

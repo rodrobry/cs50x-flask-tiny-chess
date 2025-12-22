@@ -1,4 +1,4 @@
-from .constants import FILES
+from .constants import FILES, PIECE_VALUES
 from .piece import Bishop, Knight, Monarch, Pawn, Piece, Rook
 from .models import GameMode, GameState, Sounds, Move
 from typing import List
@@ -6,7 +6,7 @@ from typing import List
 class Board:
     def __init__(self):
         self.board_array: List[List[Piece]] = self.initialize_board()
-        self.game_mode = GameMode.BOT
+        self.game_mode = GameMode.BOT_MEDIUM
         self.game_state = GameState.WHITE_TURN
         self.move_history = []
         self.current_player = 'white'
@@ -193,17 +193,35 @@ class Board:
                 if piece is None or piece.color != color:
                     continue
                 for move in piece.get_valid_moves(self.board_array):
-                    moves.append(Move(piece.position, move))
+                    score = 0
+                    target_piece: Piece = self.board_array[move[0]][move[1]]
+                    if target_piece is not None:
+                        score = PIECE_VALUES.get(target_piece.symbol, 0)
+                    moves.append(Move(piece.position, move, score))
         return moves
 
 
-    def get_random_legal_move(self, color: str) -> Move:
+    def get_bot_move(self) -> Move:
         """
         Get a random legal move for a side.
         Returns a tuple pair -> (start_rank, start_file), (end_rank, end_file).
         """
         import random
-        legal_moves = self.get_legal_moves(color)
-        if not legal_moves:
+        moves = self.get_legal_moves('black')
+        if not moves:
             return None
-        return random.choice(legal_moves)
+        if self.game_mode == GameMode.BOT_EASY:
+            return random.choice(moves)
+        elif self.game_mode == GameMode.BOT_MEDIUM:
+            best_score = -float('inf')
+            best_moves = []
+            # Get moves with the best score
+            for move in moves:
+                if move.score > best_score:
+                    # We found a new "best" move, clear the old ties
+                    best_score = move.score
+                    best_moves = [move]
+                elif move.score == best_score:
+                    # We found another move just as good as the current best
+                    best_moves.append(move)
+            return random.choice(best_moves)

@@ -93,8 +93,12 @@ def move():
         }), 400
     
      # Handle bot move if in bot mode and it's black's turn
-    if game_board.game_mode == GameMode.BOT and game_board.current_player == 'black' and game_board.is_game_active():
-        bot_move = game_board.get_random_legal_move('black')
+    if game_board.current_player == 'black' and game_board.is_game_active():
+        if game_board.game_mode != GameMode.BOT_EASY:
+            bot_move = game_board.get_bot_move()
+        elif game_board.game_mode == GameMode.BOT_MEDIUM:
+            bot_move = game_board.get_bot_move()
+
         if bot_move:
             result = game_board.move_piece(bot_move.start, bot_move.end)
     
