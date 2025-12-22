@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, jsonify
 from .board import Board
-from .piece import Piece
 from .constants import FILES
+from .models import GameMode
+from .piece import Piece
 
 bp = Blueprint('main', __name__)
 
@@ -18,7 +19,7 @@ def index():
     player_turn = "White" if game_board.current_player == 'white' else "Black"
 
     return render_template(
-        "index.html", board=board, files=FILES, log=game_board.move_history, status=f"{player_turn}'s Turn")
+        "index.html", board=board, files=FILES, log=game_board.move_history, status=f"{player_turn}'s Turn", game_mode=game_board.game_mode)
 
 @bp.route('/select', methods=['POST'])
 def select():
@@ -84,24 +85,30 @@ def move():
     # Execute the move on the board
     result = game_board.move_piece(start_coords, end_coords)
 
-    if result['success']:
-        # Return a success message
-        return jsonify({
-            'status': 'success',
-            'message': result['message'],
-            'current_player': result['current_player'],
-            'game_state': result['game_state'],
-            'new_board': game_board.serialize_board(),
-            'move_history': game_board.move_history,
-            'is_capture': result['sound']
-        })
-    else:
-        # Return an error message so the JS can alert the user
+    if not result['success']:
         return jsonify({
             'status': 'error', 
             'message': result['message'],
             'reason': result.get('reason', 'unknown')
         }), 400
+    
+     # Handle bot move if in bot mode and it's black's turn
+    if game_board.game_mode == GameMode.BOT and game_board.current_player == 'black' and game_board.is_game_active():
+        bot_move = game_board.get_random_legal_move('black')
+        if bot_move:
+            result = game_board.move_piece(bot_move.start, bot_move.end)
+    
+    # Return a success message
+    return jsonify({
+        'status': 'success',
+        'message': result['message'],
+        'current_player': result['current_player'],
+        'game_state': result['game_state'],
+        'new_board': game_board.serialize_board(),
+        'move_history': game_board.move_history,
+        'is_capture': result['sound']
+    })
+
 
 @bp.route('/reset', methods=['POST'])
 def reset_game():
@@ -115,3 +122,9 @@ def reset_game():
         'game_state': game_board.game_state.value,
         'new_board': game_board.serialize_board()
     })
+
+@bp.route("/update_mode", methods=["POST"])
+def update_mode():
+    data = request.json
+    game_board.game_mode = data['mode']
+    return jsonify({"status": "success"})

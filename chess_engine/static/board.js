@@ -88,7 +88,7 @@ async function movePiece(row, col) {
         piece = result.new_board[endRow][endCol];
 
         // Execute move
-        updateBoardUI(piece, targetSquare, selectedSquare);
+        renderBoard(result.new_board);
         playMoveSound(result.is_capture);
         updateMoveLog(result.move_history);
         // Update game status
@@ -156,9 +156,30 @@ function playMoveSound(soundName) {
     sound.play();
 }
 
-function updateBoardUI(piece, targetSquare, selectedSquare) {
-        targetSquare.innerText = piece.symbol;
-        targetSquare.classList.remove('white', 'black');
-        targetSquare.classList.add(piece.color);
-        selectedSquare.innerText = '';
+function renderBoard(boardArray) {
+    const squareElements = document.querySelectorAll('#chess-board td');
+
+    squareElements.forEach((square, index) => {
+        const r = Math.floor(index / 5);
+        const c = index % 5;
+        const piece = boardArray[r][c];
+        square.innerHTML = '';
+        if (piece) {
+            square.innerText = piece.symbol;
+            square.classList.remove('white', 'black');
+            square.classList.add(piece.color);
+        }
+    });
+}
+
+function updateGameMode() {
+    const modeSelect = document.getElementById('game-mode');
+    const selectedMode = modeSelect.value;
+    fetch('/update_mode', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ mode: selectedMode })
+    });
 }

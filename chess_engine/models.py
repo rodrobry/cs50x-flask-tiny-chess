@@ -1,11 +1,21 @@
-from enum import Enum
+from enum import StrEnum
+from dataclasses import dataclass
 
-class GameState(Enum):
+class GameState(StrEnum):
     WHITE_TURN = "white_turn"
     BLACK_TURN = "black_turn"
     GAME_OVER = "game_over"
 
-class Sounds(Enum):
+class Sounds(StrEnum):
     MOVE = "move"
     CAPTURE = "capture"
     GAME_OVER = "gameover"
+
+class GameMode(StrEnum):
+    LOCAL = "local"
+    BOT = "bot"
+
+@dataclass
+class Move:
+    start: tuple
+    end: tuple

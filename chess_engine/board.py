@@ -1,13 +1,16 @@
-from .piece import Bishop, Knight, Monarch, Pawn, Piece, Rook
-from .models import GameState, Sounds
 from .constants import FILES
+from .piece import Bishop, Knight, Monarch, Pawn, Piece, Rook
+from .models import GameMode, GameState, Sounds, Move
+from typing import List
 
 class Board:
     def __init__(self):
-        self.board_array = self.initialize_board()
-        self.move_history = []
+        self.board_array: List[List[Piece]] = self.initialize_board()
+        self.game_mode = GameMode.BOT
         self.game_state = GameState.WHITE_TURN
+        self.move_history = []
         self.current_player = 'white'
+
 
     def initialize_board(self):
         """
@@ -44,9 +47,11 @@ class Board:
     def get_board(self):
         return self.board_array
     
+
     def is_game_active(self):
         """Check if the game is still in progress."""
         return self.game_state in (GameState.WHITE_TURN, GameState.BLACK_TURN)
+
 
     def move_piece(self, start_coords, end_coords):
         """
@@ -125,12 +130,13 @@ class Board:
         self.move_history.append(log_str)
 
         return {
-            'success': True,
-            'message': f'Moved {piece_to_move.symbol} to ({end_rank}, {end_file})',
-            'current_player': self.current_player,
-            'game_state': self.game_state.value,
-            'sound': sound.value
-        }
+                'success': True,
+                'message': f'Moved {piece_to_move.symbol} to ({end_rank}, {end_file})',
+                'current_player': self.current_player,
+                'game_state': self.game_state,
+                'sound': sound
+            }
+
 
     def _advance_turn(self):
         """Switch to the next player's turn."""
@@ -141,9 +147,11 @@ class Board:
             self.game_state = GameState.WHITE_TURN
             self.current_player = 'white'
 
+
     def end_game(self):
         """End the game (e.g., on checkmate or resignation)."""
         self.game_state = GameState.GAME_OVER
+
 
     def reset_game(self):
         """Reset the board to starting position and restart the game."""
@@ -151,6 +159,7 @@ class Board:
         self.game_state = GameState.WHITE_TURN
         self.current_player = 'white'
         self.move_history = []
+
 
     def serialize_board(self):
         """
@@ -171,4 +180,30 @@ class Board:
                     })
             serialized.append(serialized_row)
         return serialized
-    
+
+
+    def get_legal_moves(self, color: str) -> List[Move]:
+        """
+        Get all legal moves for a side.
+        Returns a list of tuple pairs -> (start_rank, start_file), (end_rank, end_file).
+        """
+        moves: List[Move] = []
+        for rank in self.board_array:
+            for piece in rank:
+                if piece is None or piece.color != color:
+                    continue
+                for move in piece.get_valid_moves(self.board_array):
+                    moves.append(Move(piece.position, move))
+        return moves
+
+
+    def get_random_legal_move(self, color: str) -> Move:
+        """
+        Get a random legal move for a side.
+        Returns a tuple pair -> (start_rank, start_file), (end_rank, end_file).
+        """
+        import random
+        legal_moves = self.get_legal_moves(color)
+        if not legal_moves:
+            return None
+        return random.choice(legal_moves)

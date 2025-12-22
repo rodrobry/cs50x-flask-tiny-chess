@@ -46,11 +46,11 @@
             </div>
             <button onclick="resetGame()">Reset Game</button>
             <h3>Game mode</h3>
-            <select id="game-mode" onchange="changeGameMode()">
-                <option value="local">
+            <select id="game-mode" onchange="updateGameMode()">
+                <option value="local" {{ 'selected' if game_mode == 'local' else '' }}>
                     Local
                 </option>
-                <option value="bot">
+                <option value="bot" {{ 'selected' if game_mode == 'bot' else '' }}>
                     Bot
                 </option>
             </select>
