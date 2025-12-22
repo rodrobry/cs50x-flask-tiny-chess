@@ -197,13 +197,13 @@ class Board:
                     target_piece: Piece = self.board_array[move[0]][move[1]]
                     if target_piece is not None:
                         score = PIECE_VALUES.get(target_piece.symbol, 0)
-                    moves.append(Move(piece.position, move, score))
+                    moves.append(Move(piece.position, move, piece.symbol, score))
         return moves
 
 
     def get_bot_move(self) -> Move:
         """
-        Get a random legal move for a side.
+        Get a legal move.
         Returns a tuple pair -> (start_rank, start_file), (end_rank, end_file).
         """
         import random
@@ -213,15 +213,19 @@ class Board:
         if self.game_mode == GameMode.BOT_EASY:
             return random.choice(moves)
         elif self.game_mode == GameMode.BOT_MEDIUM:
-            best_score = -float('inf')
-            best_moves = []
-            # Get moves with the best score
+            white_legal_moves = self.get_legal_moves('white')
+            white_targets = {m.end for m in white_legal_moves}
+
+            # Adjust scores
             for move in moves:
-                if move.score > best_score:
-                    # We found a new "best" move, clear the old ties
-                    best_score = move.score
-                    best_moves = [move]
-                elif move.score == best_score:
-                    # We found another move just as good as the current best
-                    best_moves.append(move)
+                # If the destination is defended, subtract the value of the capturing piece
+                if move.end in white_targets:
+                    print("base move:", move)
+                    move.score -= PIECE_VALUES.get(move.piece, 0)
+                    print("adjusted move:", move)
+
+            # Get the best score and all moves with that score
+            best_score = max(move.score for move in moves)
+            best_moves = [move for move in moves if move.score == best_score]
+
             return random.choice(best_moves)

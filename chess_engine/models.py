@@ -20,4 +20,5 @@ class GameMode(StrEnum):
 class Move:
     start: tuple
     end: tuple
+    piece: str # e.g., 'P', 'B', 'N', 'R', 'M'
     score: int = 0
