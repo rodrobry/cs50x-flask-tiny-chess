@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, jsonify
 from .board import Board
 from .piece import Piece
+from .constants import FILES
 
 bp = Blueprint('main', __name__)
 
@@ -17,7 +18,7 @@ def index():
     player_turn = "White" if game_board.current_player == 'white' else "Black"
 
     return render_template(
-        "index.html", board=board, files=game_board.FILES, log=game_board.move_history, status=f"{player_turn}'s Turn")
+        "index.html", board=board, files=FILES, log=game_board.move_history, status=f"{player_turn}'s Turn")
 
 @bp.route('/select', methods=['POST'])
 def select():

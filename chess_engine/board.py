@@ -1,19 +1,8 @@
-from enum import Enum
 from .piece import Bishop, Knight, Monarch, Pawn, Piece, Rook
-
-class GameState(Enum):
-    WHITE_TURN = "white_turn"
-    BLACK_TURN = "black_turn"
-    GAME_OVER = "game_over"
-
-class Sounds(Enum):
-    MOVE = "move"
-    CAPTURE = "capture"
-    GAME_OVER = "gameover"
+from .models import GameState, Sounds
+from .constants import FILES
 
 class Board:
-    FILES = ['a', 'b', 'c', 'd', 'e']
-
     def __init__(self):
         self.board_array = self.initialize_board()
         self.move_history = []
@@ -117,7 +106,7 @@ class Board:
         self._advance_turn()
         # Capture logic
         if target_piece is not None:
-            log_str = f"{piece_to_move.symbol}x{8 - end_rank}{self.FILES[end_file]}"
+            log_str = f"{piece_to_move.symbol}x{8 - end_rank}{FILES[end_file]}"
             if target_piece.symbol == 'M':
                 # Monarch captured - game over
                 print(f"Game over! {piece_to_move.color.capitalize()} wins by capturing the Monarch.")
@@ -128,7 +117,7 @@ class Board:
                 sound = Sounds.CAPTURE
         # Move logic
         else:
-            log_str = f"{piece_to_move.symbol}{8 - end_rank}{self.FILES[end_file]}"
+            log_str = f"{piece_to_move.symbol}{8 - end_rank}{FILES[end_file]}"
             print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
             sound = Sounds.MOVE
 

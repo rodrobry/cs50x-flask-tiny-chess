@@ -67,23 +67,23 @@ footer {
     flex-direction: column-reverse; /* Keep scroll at bottom */
 }
 
-.move-list li:nth-child(odd) { /* White moves */
+#move-list li:nth-child(odd) { /* White moves */
     border: 1px solid lightgray;
     border-left: 4px solid lightgrey;
 }
 
-.move-list li:nth-child(even) { /* Black moves */
+#move-list li:nth-child(even) { /* Black moves */
     background-color: lightgrey;
     border-left: 4px solid black;
 }
 
 /* Optional: Add some padding to make the "bars" look better */
-.move-list li {
+#move-list li {
     padding: 5px 10px;
     list-style-position: inside; /* Keeps the numbers inside the colored box */
 }
 
-.move-list {
+#move-list {
     padding: 0px;     /* Room for the list numbers */
     margin: 0;
     text-align: left;
