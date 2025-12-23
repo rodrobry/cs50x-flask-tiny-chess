@@ -1,6 +1,7 @@
 from .board import Board
 from .constants import PIECE_VALUES
 from .models import GameMode, Move
+from .piece import Piece
 import random
 
 side = 'black'
@@ -29,13 +30,22 @@ def get_best_greedy_moves(board: Board, moves: list[Move]) -> list[Move]:
     enemy_legal_moves = board.get_legal_moves(enemy, include_defenses=True)
     enemy_targets = {m.end for m in enemy_legal_moves}
 
-    # Adjust scores
+    # Calculate scores
     for move in moves:
-        # If the destination is defended, subtract the value of the capturing piece
+        move.score = 0
+        # If the destination has an enemy piece, add its value to the score
+        target_piece: Piece = board.board_array[move.end[0]][move.end[1]]
+        if target_piece is not None:
+            move.score = PIECE_VALUES.get(target_piece.symbol, 0)
+        # If the destination is defended, subtract the value of the sacrificed piece
         if move.end in enemy_targets:
-            print("base move:", move)
             move.score -= PIECE_VALUES.get(move.piece, 0)
-            print("adjusted move:", move)
+        # If the move removes a piece from an attacked square, make it more valuable
+        start_attacked = any(m.end == move.start for m in enemy_legal_moves)
+        end_attacked = any(m.end == move.end for m in enemy_legal_moves)
+        if start_attacked and not end_attacked:
+            move.score += PIECE_VALUES.get(move.piece, 0)
+        print(f"Move: {move.start} -> {move.end}, Score: {move.score}")
 
     # Get the best score and all moves with that score
     best_score = max(move.score for move in moves)

@@ -193,9 +193,5 @@ class Board:
                 if piece is None or piece.color != color:
                     continue
                 for move in piece.get_valid_moves(self.board_array, include_defenses=include_defenses):
-                    score = 0
-                    target_piece: Piece = self.board_array[move[0]][move[1]]
-                    if target_piece is not None:
-                        score = PIECE_VALUES.get(target_piece.symbol, 0)
-                    moves.append(Move(piece.position, move, piece.symbol, score))
+                    moves.append(Move(piece.position, move, piece.symbol))
         return moves
