@@ -182,7 +182,7 @@ class Board:
         return serialized
 
 
-    def get_legal_moves(self, color: str) -> List[Move]:
+    def get_legal_moves(self, color: str, include_defenses: bool = False) -> List[Move]:
         """
         Get all legal moves for a side.
         Returns a list of tuple pairs -> (start_rank, start_file), (end_rank, end_file).
@@ -192,7 +192,7 @@ class Board:
             for piece in rank:
                 if piece is None or piece.color != color:
                     continue
-                for move in piece.get_valid_moves(self.board_array):
+                for move in piece.get_valid_moves(self.board_array, include_defenses=include_defenses):
                     score = 0
                     target_piece: Piece = self.board_array[move[0]][move[1]]
                     if target_piece is not None:

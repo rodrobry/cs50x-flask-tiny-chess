@@ -26,7 +26,7 @@ def get_best_greedy_moves(board: Board, moves: list[Move]) -> list[Move]:
     Returns a list of Move objects.
     """
     enemy = 'white' if side == 'black' else 'black'
-    enemy_legal_moves = board.get_legal_moves(enemy)
+    enemy_legal_moves = board.get_legal_moves(enemy, include_defenses=True)
     enemy_targets = {m.end for m in enemy_legal_moves}
 
     # Adjust scores

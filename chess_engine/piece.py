@@ -24,12 +24,18 @@ class Piece:
         target = board[rank][file]
         return target is not None and getattr(target, 'color', None) != self.color
 
+    def _is_ally_at(self, board, rank, file):
+        if not self._on_board(rank, file):
+            return False
+        target = board[rank][file]
+        return target is not None and getattr(target, 'color', None) == self.color
+
     def _is_empty_at(self, board, rank, file):
         if not self._on_board(rank, file):
             return False
         return board[rank][file] is None
 
-    def _sliding_moves(self, board, directions, max_range=7):
+    def _sliding_moves(self, board, directions, max_range=7, include_defenses=False):
         """Generic sliding move generator used by Rook/Bishop/Queen-like pieces.
 
         directions: iterable of (dr, df) tuples.
@@ -49,10 +55,14 @@ class Piece:
                 # occupied
                 if getattr(target, 'color', None) != self.color:
                     moves.append((r, f))
+                else:
+                    # allied piece encountered
+                    if include_defenses:
+                        moves.append((r, f))
                 break
         return moves
 
-    def get_valid_moves(self, board):
+    def get_valid_moves(self, board, include_defenses: bool = False):
         """
         Abstract method. Subclasses must override this to return a list of 
         (row, file) tuples representing legal destinations.
@@ -66,7 +76,7 @@ class Pawn(Piece):
         super().__init__(color, position)
         self.symbol = 'P'
 
-    def get_valid_moves(self, board):
+    def get_valid_moves(self, board, include_defenses: bool = False):
         # Simplified Pawn move logic (only one step forward, no special moves)
         moves = []
         rank, file = self.position
@@ -84,7 +94,9 @@ class Pawn(Piece):
         for offset in (-1, 1):
             target_rank = rank + direction
             target_file = file + offset
-            if self._is_enemy_at(board, target_rank, target_file):
+            # Pawns 'attack' diagonally; include allied-occupied diagonals when asked
+            if self._is_enemy_at(board, target_rank, target_file) or (
+                    include_defenses and self._is_ally_at(board, target_rank, target_file)):
                 moves.append((target_rank, target_file))
 
         return moves
@@ -95,10 +107,10 @@ class Rook(Piece):
         super().__init__(color, position)
         self.symbol = 'R'
 
-    def get_valid_moves(self, board):
+    def get_valid_moves(self, board, include_defenses: bool = False):
         # Use generic sliding helper for orthogonal directions
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        return self._sliding_moves(board, directions)
+        return self._sliding_moves(board, directions, include_defenses=include_defenses)
 
 
 class Knight(Piece):
@@ -106,7 +118,7 @@ class Knight(Piece):
         super().__init__(color, position)
         self.symbol = 'N'
 
-    def get_valid_moves(self, board):
+    def get_valid_moves(self, board, include_defenses: bool = False):
         moves = []
         rank, file = self.position
         deltas = [
@@ -120,6 +132,8 @@ class Knight(Piece):
             target = board[r][f]
             if target is None or getattr(target, 'color', None) != self.color:
                 moves.append((r, f))
+            elif include_defenses and self._is_ally_at(board, r, f):
+                moves.append((r, f))
         return moves
     
 
@@ -128,9 +142,9 @@ class Bishop(Piece):
         super().__init__(color, position)
         self.symbol = 'B'
 
-    def get_valid_moves(self, board):
+    def get_valid_moves(self, board, include_defenses: bool = False):
         directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
-        return self._sliding_moves(board, directions)
+        return self._sliding_moves(board, directions, include_defenses=include_defenses)
     
 
 class Monarch(Piece):
@@ -138,8 +152,8 @@ class Monarch(Piece):
         super().__init__(color, position)
         self.symbol = 'M'
 
-    def get_valid_moves(self, board):
+    def get_valid_moves(self, board, include_defenses: bool = False):
         # Combine rook and bishop directions (like a Queen in standard chess)
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1),
                       (-1, -1), (-1, 1), (1, -1), (1, 1)]
-        return self._sliding_moves(board, directions)
+        return self._sliding_moves(board, directions, include_defenses=include_defenses)
