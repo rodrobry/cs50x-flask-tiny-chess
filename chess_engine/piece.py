@@ -60,6 +60,7 @@ class Piece:
         """
         return []
 
+
 class Pawn(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
@@ -99,6 +100,7 @@ class Rook(Piece):
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         return self._sliding_moves(board, directions)
 
+
 class Knight(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
@@ -120,6 +122,7 @@ class Knight(Piece):
                 moves.append((r, f))
         return moves
     
+
 class Bishop(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
@@ -129,6 +132,7 @@ class Bishop(Piece):
         directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         return self._sliding_moves(board, directions)
     
+
 class Monarch(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)

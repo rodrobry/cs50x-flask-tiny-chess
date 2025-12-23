@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from .board import Board
+from .bot import get_bot_move
 from .constants import FILES
 from .models import GameMode
 from .piece import Piece
@@ -95,9 +96,9 @@ def move():
      # Handle bot move if in bot mode and it's black's turn
     if game_board.current_player == 'black' and game_board.is_game_active():
         if game_board.game_mode != GameMode.BOT_EASY:
-            bot_move = game_board.get_bot_move()
+            bot_move = get_bot_move(game_board)
         elif game_board.game_mode == GameMode.BOT_MEDIUM:
-            bot_move = game_board.get_bot_move()
+            bot_move = get_bot_move(game_board)
 
         if bot_move:
             result = game_board.move_piece(bot_move.start, bot_move.end)
