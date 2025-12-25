@@ -93,15 +93,12 @@ def move():
             'reason': result.get('reason', 'unknown')
         }), 400
     
-     # Handle bot move if in bot mode and it's black's turn
+    # Handle bot move if in bot mode and it's black's turn
     if game_board.current_player == 'black' and game_board.is_game_active():
-        if game_board.game_mode != GameMode.BOT_EASY:
+        if game_board.game_mode == GameMode.BOT_EASY or game_board.game_mode == GameMode.BOT_MEDIUM:
             bot_move = get_bot_move(game_board)
-        elif game_board.game_mode == GameMode.BOT_MEDIUM:
-            bot_move = get_bot_move(game_board)
-
-        if bot_move:
-            result = game_board.move_piece(bot_move.start, bot_move.end)
+            if bot_move:
+                result = game_board.move_piece(bot_move.start, bot_move.end)
     
     # Return a success message
     return jsonify({

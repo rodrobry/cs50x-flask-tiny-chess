@@ -29,6 +29,8 @@ def get_best_greedy_moves(board: Board, moves: list[Move]) -> list[Move]:
     enemy = 'white' if side == 'black' else 'black'
     enemy_legal_moves = board.get_legal_moves(enemy, include_defenses=True)
     enemy_targets = {m.end for m in enemy_legal_moves}
+    # TODO: Either find a way to add sliding moves that stop being blocked,
+    # or implement ability to simulate/undo moves to validate their value.
 
     # Calculate scores
     for move in moves:

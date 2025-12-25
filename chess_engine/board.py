@@ -93,38 +93,36 @@ class Board:
                 'reason': 'invalid_move'
             }
 
+        # Get target before the move
+        target_piece: Piece = self.board_array[end_rank][end_file]
         # Execute the move
-        target_piece = self.board_array[end_rank][end_file]
         piece_to_move.position = end_coords
-        if piece_to_move.symbol == 'P' and (end_rank == 0 or end_rank == 7):
-            # Pawn promotion
-            if piece_to_move.color == 'white':
-                promoted_piece = Knight('white', (end_rank, end_file))
-            else:
-                promoted_piece = Bishop('black', (end_rank, end_file))
-            self.board_array[end_rank][end_file] = promoted_piece
-            print("Pawn promoted!")
-        else:
-            self.board_array[end_rank][end_file] = piece_to_move
+        self.board_array[end_rank][end_file] = piece_to_move
         self.board_array[start_rank][start_file] = None
-        # Switch turn
-        self._advance_turn()
-        # Capture logic
-        if target_piece is not None:
+        if target_piece is None:
+            # Move logic
+            log_str = f"{piece_to_move.symbol}{8 - end_rank}{FILES[end_file]}"
+            print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
+            sound = Sounds.MOVE
+            self._advance_turn()
+        else:
+            # Capture logic
             log_str = f"{piece_to_move.symbol}x{8 - end_rank}{FILES[end_file]}"
             if target_piece.symbol == 'M':
                 # Monarch captured - game over
                 print(f"Game over! {piece_to_move.color.capitalize()} wins by capturing the Monarch.")
                 self.end_game()
                 sound = Sounds.GAME_OVER
+            elif piece_to_move.symbol == 'P' and (end_rank == 0 or end_rank == 7):
+                # Pawn ascension - game over
+                print(f"Game over! {piece_to_move.color.capitalize()} wins by ascending a Pawn.")
+                self.end_game()
+                sound = Sounds.GAME_OVER
             else:
-                print(f"Captured {target_piece.symbol} at {end_coords}")
+                # Regugalar capture
+                print(f"Captured {target_piece.color} {target_piece.symbol} at {end_coords}")
                 sound = Sounds.CAPTURE
-        # Move logic
-        else:
-            log_str = f"{piece_to_move.symbol}{8 - end_rank}{FILES[end_file]}"
-            print(f"Moved {piece_to_move.symbol} from {start_coords} to {end_coords}")
-            sound = Sounds.MOVE
+                self._advance_turn()
 
         # Log move
         self.move_history.append(log_str)
