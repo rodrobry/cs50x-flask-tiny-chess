@@ -69,13 +69,17 @@
             just mess around and have fun)</p>
         <p>If you played chess before, the differences include:</p>
         <ul>
-            <li>No castling</li>
-            <li>No en passant</li>
-            <li>No first double move for pawns</li>
-            <li>Pawns the reach the oposing back rank promote automatically
-                depending on the side (white - knight, black - bishop).
+            <li>No castling and no en passant</li>
+            <li>The Monarch moves like the Queen, but if captured you lose the
+                game on the spot, sort of like a king in chess.
             </li>
-            <li>No 50-move rule and draw on repetition sort of stuff</li>
+            <li>No check or checkmate however - you can move into danger and the game
+                only actually ends if the Monarch is captured.
+            </li>
+            <li>"Ascencion" instead of Promotion - Pawns that reach the oposing
+                back rank don't get promoted but instead instantly win the game.
+            </li>
+            <li>No 50-move rule and draw on repetition sort of stuff.</li>
     </footer>
 
     <audio id="sound-move" src="{{ url_for('static', filename='sounds/move.wav') }}" preload="auto"></audio>

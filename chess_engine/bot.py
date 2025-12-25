@@ -31,6 +31,8 @@ def get_best_greedy_moves(board: Board, moves: list[Move]) -> list[Move]:
     enemy_targets = {m.end for m in enemy_legal_moves}
     # TODO: Either find a way to add sliding moves that stop being blocked,
     # or implement ability to simulate/undo moves to validate their value.
+    # Also need to account for pawn diagonal captures that are only possible
+    # after other pieces move.
 
     # Calculate scores
     for move in moves:
