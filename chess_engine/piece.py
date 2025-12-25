@@ -75,20 +75,23 @@ class Pawn(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = 'P'
+        self.has_moved = False
 
     def get_valid_moves(self, board, include_defenses: bool = False):
-        # Simplified Pawn move logic (only one step forward, no special moves)
+        # Pawn move logic: one step forward normally, two steps on first move
         moves = []
         rank, file = self.position
-        
+
         # Determine direction based on color
         direction = -1 if self.color == 'white' else 1
-        
-        # Compute one square straight ahead and add if empty
-        target_rank = rank + direction
-        target_pos = (target_rank, file)
-        if self._on_board(target_rank, file) and self._is_empty_at(board, target_rank, file):
-            moves.append(target_pos)
+
+        # Check forward moves: 1 square always, 2 squares if hasn't moved
+        max_forward = 1 if self.has_moved else 2
+        for i in range(1, max_forward + 1):
+            target_rank = rank + direction * i
+            if not self._on_board(target_rank, file) or not self._is_empty_at(board, target_rank, file):
+                break
+            moves.append((target_rank, file))
 
         # Check diagonally captures
         for offset in (-1, 1):

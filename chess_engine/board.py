@@ -99,6 +99,11 @@ class Board:
         piece_to_move.position = end_coords
         self.board_array[end_rank][end_file] = piece_to_move
         self.board_array[start_rank][start_file] = None
+
+        # Mark pawn as moved on first move
+        if isinstance(piece_to_move, Pawn):
+            piece_to_move.has_moved = True
+
         if target_piece is None:
             # Move logic
             log_str = f"{piece_to_move.symbol}{8 - end_rank}{FILES[end_file]}"
